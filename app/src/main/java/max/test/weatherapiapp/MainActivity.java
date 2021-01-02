@@ -37,6 +37,9 @@ public class MainActivity extends AppCompatActivity {
         et_dataInput = findViewById(R.id.et_dataInput);
         lv_weatherReport = findViewById(R.id.lv_weatherReports);
 
+        ServiceData serviceData = new ServiceData(MainActivity.this);
+
+
         //click listeners for the buttons
         btn_getWeatherById.setOnClickListener(v -> {
 
@@ -49,29 +52,19 @@ public class MainActivity extends AppCompatActivity {
         });
 
         btn_cityId.setOnClickListener(v -> {
-            String url = "https://www.metaweather.com/api/location/search/?query=" + et_dataInput.getText().toString();
-            JsonArrayRequest request = new JsonArrayRequest(Request.Method.GET, url, null, new Response.Listener<JSONArray>() {
+
+            serviceData.getCityId(et_dataInput.getText().toString(), new ServiceData.VolleyResponseListener() {
                 @Override
-                public void onResponse(JSONArray response) {
-                    String cityId = "";
-                    try {
-                        JSONObject cityInfo = response.getJSONObject(0);
-                        cityId = cityInfo.getString("woeid");
-                    } catch (JSONException e) {
-                        e.printStackTrace();
-                    }
-                    Toast.makeText(MainActivity.this, "City ID = " + cityId, Toast.LENGTH_SHORT).show();
+                public void onError(String message) {
+                    Toast.makeText(MainActivity.this, "Something wrong", Toast.LENGTH_SHORT).show();
                 }
-            }, new Response.ErrorListener() {
+
                 @Override
-                public void onErrorResponse(VolleyError error) {
-                    Toast.makeText(MainActivity.this, "An ERROR", Toast.LENGTH_SHORT).show();
+                public void onResponse(String cityId) {
+                    Toast.makeText(MainActivity.this, "Returned an ID of " + cityId, Toast.LENGTH_SHORT).show();
                 }
             });
 
-            // Add the request to the RequestQueue.
-            MySingleton.getInstance(MainActivity.this).addToRequestQueue(request);
         });
-
     }
 }
