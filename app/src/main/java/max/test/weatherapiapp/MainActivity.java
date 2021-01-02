@@ -49,8 +49,6 @@ public class MainActivity extends AppCompatActivity {
         });
 
         btn_cityId.setOnClickListener(v -> {
-            // Instantiate the RequestQueue.
-            RequestQueue queue = Volley.newRequestQueue(MainActivity.this);
             String url = "https://www.metaweather.com/api/location/search/?query=" + et_dataInput.getText().toString();
             JsonArrayRequest request = new JsonArrayRequest(Request.Method.GET, url, null, new Response.Listener<JSONArray>() {
                 @Override
@@ -58,11 +56,11 @@ public class MainActivity extends AppCompatActivity {
                     String cityId = "";
                     try {
                         JSONObject cityInfo = response.getJSONObject(0);
-                        cityId =cityInfo.getString("woeid");
+                        cityId = cityInfo.getString("woeid");
                     } catch (JSONException e) {
                         e.printStackTrace();
                     }
-                    Toast.makeText(MainActivity.this, "City ID = "+cityId , Toast.LENGTH_SHORT).show();
+                    Toast.makeText(MainActivity.this, "City ID = " + cityId, Toast.LENGTH_SHORT).show();
                 }
             }, new Response.ErrorListener() {
                 @Override
@@ -72,7 +70,7 @@ public class MainActivity extends AppCompatActivity {
             });
 
             // Add the request to the RequestQueue.
-            queue.add(request);
+            MySingleton.getInstance(MainActivity.this).addToRequestQueue(request);
         });
 
     }
