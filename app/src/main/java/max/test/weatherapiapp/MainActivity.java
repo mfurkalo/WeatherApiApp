@@ -1,7 +1,5 @@
 package max.test.weatherapiapp;
 
-import androidx.appcompat.app.AppCompatActivity;
-
 import android.os.Bundle;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
@@ -9,16 +7,7 @@ import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.Toast;
 
-import com.android.volley.Request;
-import com.android.volley.RequestQueue;
-import com.android.volley.Response;
-import com.android.volley.VolleyError;
-import com.android.volley.toolbox.JsonArrayRequest;
-import com.android.volley.toolbox.Volley;
-
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
+import androidx.appcompat.app.AppCompatActivity;
 
 import java.util.List;
 
@@ -52,13 +41,27 @@ public class MainActivity extends AppCompatActivity {
 
             @Override
             public void onResponse(List<WeatherReportModel> weatherReportModels) {
-                ArrayAdapter arrayAdapter =new ArrayAdapter(MainActivity.this, android.R.layout.simple_list_item_1, weatherReportModels);
+                ArrayAdapter<WeatherReportModel> arrayAdapter = new ArrayAdapter<>(MainActivity.this, android.R.layout.simple_list_item_1, weatherReportModels);
                 lv_weatherReport.setAdapter(arrayAdapter);
 
             }
         }));
 
-        btn_getWeatherByName.setOnClickListener(v -> Toast.makeText(MainActivity.this, "You typed " + et_dataInput.getText().toString(), Toast.LENGTH_SHORT).show());
+        btn_getWeatherByName.setOnClickListener(v -> serviceData.getCityForecastByName(et_dataInput.getText().toString(), new ServiceData.GetCityForecastByNameCallback() {
+                    @Override
+                    public void onError(String message) {
+                        Toast.makeText(MainActivity.this, "Something wrong", Toast.LENGTH_SHORT).show();
+                    }
+
+                    @Override
+                    public void onResponse(List<WeatherReportModel> weatherReportModels) {
+                        ArrayAdapter<WeatherReportModel> arrayAdapter = new ArrayAdapter<>(MainActivity.this, android.R.layout.simple_list_item_1, weatherReportModels);
+                        lv_weatherReport.setAdapter(arrayAdapter);
+
+                    }
+                })
+
+        );
 
         btn_cityId.setOnClickListener(v -> serviceData.getCityId(et_dataInput.getText().toString(), new ServiceData.VolleyResponseListener() {
             @Override

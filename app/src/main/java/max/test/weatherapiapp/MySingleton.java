@@ -1,5 +1,6 @@
 package max.test.weatherapiapp;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 
 import com.android.volley.Request;
@@ -8,8 +9,10 @@ import com.android.volley.toolbox.Volley;
 
 public class MySingleton {
 
+    @SuppressLint("StaticFieldLeak")
     private static MySingleton instance;
     private RequestQueue requestQueue;
+    @SuppressLint("StaticFieldLeak")
     private static Context ctx;
 
     private MySingleton(Context context) {
@@ -27,8 +30,6 @@ public class MySingleton {
 
     public RequestQueue getRequestQueue() {
         if (requestQueue == null) {
-            // getApplicationContext() is key, it keeps you from leaking the
-            // Activity or BroadcastReceiver if someone passes one in.
             requestQueue = Volley.newRequestQueue(ctx.getApplicationContext());
         }
         return requestQueue;

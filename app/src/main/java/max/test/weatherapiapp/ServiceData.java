@@ -20,7 +20,6 @@ public class ServiceData {
     public static final String QUERY_FOR_CITY_WEATHER_BY_id = "https://www.metaweather.com/api/location/";
 
     Context context;
-    String cityId;
 
     public ServiceData(Context context) {
         this.context = context;
@@ -48,27 +47,16 @@ public class ServiceData {
             } catch (JSONException e) {
                 e.printStackTrace();
             }
-//                Toast.makeText(context, "City ID = " + cityId, Toast.LENGTH_SHORT).show();
             volleyResponseListener.onResponse(cityId);
-        }, error -> {
-//                Toast.makeText(context, "An ERROR", Toast.LENGTH_SHORT).show();
-            volleyResponseListener.onError("Something wrong");
-        });
-        // Add the request to the RequestQueue.
-        MySingleton.getInstance(context).addToRequestQueue(request);
+        }, error -> volleyResponseListener.onError("Something wrong"));
+          MySingleton.getInstance(context).addToRequestQueue(request);
     }
 
-
-    //    public List<WeatherReportModel> getCityForecastByName (String cityId){
-//
-//    }
-//
     public void getCityForecastById(String cityId, final ForeCastByIdResponse foreCastByIdResponse) {
         String url = QUERY_FOR_CITY_WEATHER_BY_id + cityId;
         List<WeatherReportModel> weatherReports = new ArrayList<>();
-//        get the json object
+
         JsonObjectRequest request = new JsonObjectRequest(Request.Method.GET, url, null, response -> {
-//                Toast.makeText(context, response.toString(), Toast.LENGTH_SHORT).show();
             try {
                 JSONArray consolidated_weather_list = response.getJSONArray("consolidated_weather");
 
@@ -99,9 +87,37 @@ public class ServiceData {
                 e.printStackTrace();
             }
         }, error -> {
-
         }
         );
         MySingleton.getInstance(context).addToRequestQueue(request);
+    }
+
+    public interface  GetCityForecastByNameCallback{
+        void  onError(String message);
+        void onResponse(List<WeatherReportModel>weatherReportModels);
+    }
+
+    public void getCityForecastByName(String cityName, GetCityForecastByNameCallback getCityForecastByNameCallback) {
+        getCityId(cityName, new VolleyResponseListener() {
+            @Override
+            public void onError(String message) {
+
+            }
+
+            @Override
+            public void onResponse(String cityId) {
+                getCityForecastById(cityId, new ForeCastByIdResponse() {
+                    @Override
+                    public void onError(String message) {
+
+                    }
+
+                    @Override
+                    public void onResponse(List<WeatherReportModel> weatherReportModels) {
+                        getCityForecastByNameCallback.onResponse(weatherReportModels);
+                    }
+                });
+            }
+        });
     }
 }
