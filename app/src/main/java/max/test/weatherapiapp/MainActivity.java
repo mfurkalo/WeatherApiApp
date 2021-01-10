@@ -37,34 +37,34 @@ public class MainActivity extends AppCompatActivity {
         et_dataInput = findViewById(R.id.et_dataInput);
         lv_weatherReport = findViewById(R.id.lv_weatherReports);
 
-        ServiceData serviceData = new ServiceData(MainActivity.this);
+        final ServiceData serviceData = new ServiceData(MainActivity.this);
 
 
         //click listeners for the buttons
-        btn_getWeatherById.setOnClickListener(v -> {
+        btn_getWeatherById.setOnClickListener(v -> serviceData.getCityForecastById(et_dataInput.getText().toString(), new ServiceData.ForeCastByIdResponse() {
+            @Override
+            public void onError(String message) {
+                Toast.makeText(MainActivity.this, "Something wrong", Toast.LENGTH_SHORT).show();
+            }
 
-            Toast.makeText(MainActivity.this, "You clicked W Id.", Toast.LENGTH_SHORT).show();
-        });
+            @Override
+            public void onResponse(WeatherReportModel forecast) {
+                Toast.makeText(MainActivity.this, forecast.toString(), Toast.LENGTH_SHORT).show();
+            }
+        }));
 
-        btn_getWeatherByName.setOnClickListener(v -> {
+        btn_getWeatherByName.setOnClickListener(v -> Toast.makeText(MainActivity.this, "You typed " + et_dataInput.getText().toString(), Toast.LENGTH_SHORT).show());
 
-            Toast.makeText(MainActivity.this, "You typed " + et_dataInput.getText().toString(), Toast.LENGTH_SHORT).show();
-        });
+        btn_cityId.setOnClickListener(v -> serviceData.getCityId(et_dataInput.getText().toString(), new ServiceData.VolleyResponseListener() {
+            @Override
+            public void onError(String message) {
+                Toast.makeText(MainActivity.this, "Something wrong", Toast.LENGTH_SHORT).show();
+            }
 
-        btn_cityId.setOnClickListener(v -> {
-
-            serviceData.getCityId(et_dataInput.getText().toString(), new ServiceData.VolleyResponseListener() {
-                @Override
-                public void onError(String message) {
-                    Toast.makeText(MainActivity.this, "Something wrong", Toast.LENGTH_SHORT).show();
-                }
-
-                @Override
-                public void onResponse(String cityId) {
-                    Toast.makeText(MainActivity.this, "Returned an ID of " + cityId, Toast.LENGTH_SHORT).show();
-                }
-            });
-
-        });
+            @Override
+            public void onResponse(String cityId) {
+                Toast.makeText(MainActivity.this, "Returned an ID of " + cityId, Toast.LENGTH_SHORT).show();
+            }
+        }));
     }
 }
