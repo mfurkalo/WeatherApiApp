@@ -3,6 +3,7 @@ package max.test.weatherapiapp;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.os.Bundle;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
@@ -18,6 +19,8 @@ import com.android.volley.toolbox.Volley;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+
+import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
     Button btn_cityId, btn_getWeatherById, btn_getWeatherByName;
@@ -48,8 +51,10 @@ public class MainActivity extends AppCompatActivity {
             }
 
             @Override
-            public void onResponse(WeatherReportModel forecast) {
-                Toast.makeText(MainActivity.this, forecast.toString(), Toast.LENGTH_SHORT).show();
+            public void onResponse(List<WeatherReportModel> weatherReportModels) {
+                ArrayAdapter arrayAdapter =new ArrayAdapter(MainActivity.this, android.R.layout.simple_list_item_1, weatherReportModels);
+                lv_weatherReport.setAdapter(arrayAdapter);
+
             }
         }));
 
